@@ -28,7 +28,15 @@ const courseSchema = new mongoose.Schema({
     required:true
   },
   author: String,
-  tags: [String],
+  tags: {
+      type:Array,
+      validate:{
+          validator:function(v){
+              return v && v.length>0
+          },
+          message:'A course should have at least one tag'
+      }
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
   //canot use arrow function here
@@ -48,7 +56,7 @@ async function createCourse() {
   const course = new Course({
      name: "Node js Course",
     author: "Baxan",
-    tags: ["Node", "backend"],
+    // tags: ["Node", "backend"],
     isPublished: true,
     price:25,
     category:'web'
