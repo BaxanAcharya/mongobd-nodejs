@@ -22,20 +22,26 @@ const courseSchema = new mongoose.Schema({
     maxlength: 255,
     //match:/pattern/
   },
-  category:{
-    type:String,
-    enum:['web','mobile','network'],
-    required:true
+  category: {
+    type: String,
+    enum: ["web", "mobile", "network"],
+    required: true,
   },
   author: String,
   tags: {
-      type:Array,
-      validate:{
-          validator:function(v){
-              return v && v.length>0
-          },
-          message:'A course should have at least one tag'
-      }
+    type: Array,
+    validate: {
+      isAsync: true,
+      validator: function (v, callback) {
+        //do async work
+        setTimeout(() => {
+          const result = v && v.length > 0;
+          callback(result);
+        }, 4000);
+       
+      },
+      message: "A course should have at least one tag",
+    },
   },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
@@ -45,8 +51,8 @@ const courseSchema = new mongoose.Schema({
     required: function () {
       return this.isPublished;
     },
-    min:10,
-    max:200
+    min: 10,
+    max: 200,
   },
 });
 
@@ -54,12 +60,12 @@ const Course = mongoose.model("Course", courseSchema);
 
 async function createCourse() {
   const course = new Course({
-     name: "Node js Course",
+    name: "Node js Course",
     author: "Baxan",
     // tags: ["Node", "backend"],
     isPublished: true,
-    price:25,
-    category:'web'
+    price: 25,
+    category: "web",
   });
   try {
     const result = await course.save();
