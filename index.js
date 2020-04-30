@@ -15,21 +15,43 @@ mongoose
   });
 
 const courseSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+    //match:/pattern/
+  },
+  category:{
+    type:String,
+    enum:['web','mobile','network'],
+    required:true
+  },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  //canot use arrow function here
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished;
+    },
+    min:10,
+    max:200
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema);
 
 async function createCourse() {
   const course = new Course({
-    // name: "Node js Course",
+     name: "Node js Course",
     author: "Baxan",
     tags: ["Node", "backend"],
     isPublished: true,
+    price:25,
+    category:'web'
   });
   try {
     const result = await course.save();
