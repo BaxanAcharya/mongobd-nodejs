@@ -15,7 +15,7 @@ mongoose
   });
 
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
@@ -26,13 +26,17 @@ const Course = mongoose.model("Course", courseSchema);
 
 async function createCourse() {
   const course = new Course({
-    name: "Node js Course",
+    // name: "Node js Course",
     author: "Baxan",
     tags: ["Node", "backend"],
     isPublished: true,
   });
-  const result = await course.save();
-  console.log(result);
+  try {
+    const result = await course.save();
+    console.log(result);
+  } catch (ex) {
+    console.log(ex.message);
+  }
 }
 
 createCourse();
@@ -81,36 +85,39 @@ async function getCourse() {
 
 async function updateCourse(id) {
   //query first
-//   const course = await Course.findById(id);
-//   if (!course) return;
-//   course.isPublished = true;
-//   course.author = "Another";
+  //   const course = await Course.findById(id);
+  //   if (!course) return;
+  //   course.isPublished = true;
+  //   course.author = "Another";
 
-//   //same
+  //   //same
 
-//   // course.set({
-//   //     isPublished:true,
-//   //     author:'Another'
-//   // })
-//   const result = await course.save();
-//   console.log(result);
+  //   // course.set({
+  //   //     isPublished:true,
+  //   //     author:'Another'
+  //   // })
+  //   const result = await course.save();
+  //   console.log(result);
 
   //update first  //operator update
-  const course=await Course.findByIdAndUpdate({_id:id},{
-    $set:{
-        author:'Baxan',
-        isPublished:false
-    }
-  },{new:true})
-  console.log(course)
-  
+  const course = await Course.findByIdAndUpdate(
+    { _id: id },
+    {
+      $set: {
+        author: "Baxan",
+        isPublished: false,
+      },
+    },
+    { new: true }
+  );
+  console.log(course);
 }
 //updateCourse('5eaa831ce1b5d5367aef215f');
 
-async function removeCourse(id){
- //const result=  await Course.deleteOne({_id:id})
- const course=  await Course.findByIdAndDelete({_id:id})
- //console.log(result)
- console.log(course)
+async function removeCourse(id) {
+  //const result=  await Course.deleteOne({_id:id})
+  const course = await Course.findByIdAndDelete({ _id: id });
+  //console.log(result)
+  console.log(course);
 }
 //removeCourse('5eaa83a207310bdfb94942b7')
